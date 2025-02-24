@@ -1,15 +1,15 @@
 package com.example.personal_finance.controller;
 
-import com.example.personal_finance.dto.*;
+import com.example.personal_finance.dto.LoginRequest;
+import com.example.personal_finance.dto.LoginResponse;
+import com.example.personal_finance.dto.RegisterRequest;
+import com.example.personal_finance.dto.RefreshTokenRequest;
 import com.example.personal_finance.service.AuthService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Authentication", description = "APIs for user authentication")
 public class AuthController {
 
     private final AuthService authService;
@@ -20,16 +20,16 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        return authService.register(request);
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
 
     @PostMapping("/refresh-token")
-    public LoginResponse refresh(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<LoginResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         return authService.refreshToken(request);
     }
 
@@ -37,15 +37,7 @@ public class AuthController {
     public ResponseEntity<String> resetPassword(
             @RequestParam String email,
             @RequestParam String oldPassword,
-            @RequestParam String newPassword)
-    {
-
-        String response = authService.resetPassword(email, oldPassword, newPassword);
-
-        if (response.equals("Password updated successfully")) {
-            return ResponseEntity.ok(response);
-        }
-
-        return ResponseEntity.badRequest().body(response);
+            @RequestParam String newPassword) {
+        return authService.resetPassword(email, oldPassword, newPassword);
     }
 }
