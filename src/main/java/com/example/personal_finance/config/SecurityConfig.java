@@ -15,11 +15,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for API requests
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register", // ✅ Allow public access to register
-                                "/auth/login",    // ✅ Allow public access to login
-                                "/auth/refresh-token",    // ✅ Allow public access to login
-                                "/swagger-ui/**", // ✅ Allow Swagger UI
-                                "/v3/api-docs/**",
+                                "/auth/register",       // ✅ Allow public access to register
+                                "/auth/login",          // ✅ Allow public access to login
+                                "/auth/refresh-token",  // ✅ Allow public access to refresh token
+                                "/swagger-ui/**",       // ✅ Allow Swagger UI
+                                "/v3/api-docs/**",      // ✅ Allow API Docs
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
