@@ -26,6 +26,9 @@ public class AuthService {
     }
 
     public String register(RegisterRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            return "Error: Passwords do not match";
+        }
         Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
             return "User already exists with this email";
