@@ -1,9 +1,6 @@
 package com.example.personal_finance.service;
 
-import com.example.personal_finance.dto.LoginRequest;
-import com.example.personal_finance.dto.LoginResponse;
-import com.example.personal_finance.dto.RegisterRequest;
-import com.example.personal_finance.dto.RefreshTokenRequest;
+import com.example.personal_finance.dto.*;
 import com.example.personal_finance.exception.AuthException;
 import com.example.personal_finance.model.User;
 import com.example.personal_finance.repository.UserRepository;
@@ -12,17 +9,18 @@ import com.example.personal_finance.security.PasswordEncoderUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 @Service
-public class AuthService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoderUtil passwordEncoderUtil;
     private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoderUtil passwordEncoderUtil, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, PasswordEncoderUtil passwordEncoderUtil, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoderUtil = passwordEncoderUtil;
         this.jwtUtil = jwtUtil;
@@ -128,5 +126,54 @@ public class AuthService {
         userRepository.save(user);
 
         return ResponseEntity.ok("Password updated successfully");
+    }
+
+    public ResponseEntity<UserResponse> getUserProfile(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        User user = userOptional.get();
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getPhoneNumber(),
+                user.getBalance(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<UserResponse> updateProfile(Long userId, UpdateProfileRequest request) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        User user = userOptional.get();
+
+        // Update fields
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setBalance(request.getBalance());
+
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getPhoneNumber(),
+                user.getBalance(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

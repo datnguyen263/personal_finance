@@ -24,13 +24,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh-token",
-                                "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/auth/reset-password").authenticated() // ✅ Require authentication
+                        .requestMatchers(
+                                "/users/register",
+                                "/users/login",
+                                "/users/refresh-token",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/reset-password").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // ✅ Add JWT filter
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
