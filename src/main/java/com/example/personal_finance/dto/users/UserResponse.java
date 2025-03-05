@@ -1,4 +1,4 @@
-package com.example.personal_finance.dto;
+package com.example.personal_finance.dto.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
